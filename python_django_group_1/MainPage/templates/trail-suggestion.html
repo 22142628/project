@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trail Suggestion Report</title>
+    <link rel="stylesheet" href={% static "projectC.css"%}>
+</head>
+<body>
+    <h2>Trail Suggestion Report</h2>
+    <form action="#" method="post">
+        <label for="trail-name">Trail Name *:</label>
+        <input type="text" id="trail-name" name="trail-name" required>
+        
+        <label for="issue-type">Issue Type *:</label>
+        <select id="issue-type" name="issue-type" required>
+            <option value="" trail type hidden>Select an option</option>
+            <option value="Blocked Path">Blocked Path</option>
+            <option value="Dangerous Section">Dangerous Section</option>
+            <option value="Missing Signage">Missing Signage</option>
+            <option value="Other">Other</option>
+        </select>
+        
+        <label for="description">Description of Issue *:</label>
+        <textarea id="description" name="description" rows="4" placeholder= "Insert"required></textarea>
+        
+        <label for="suggested-action">Suggested Action (optional):</label>
+        <textarea id="suggested-action" name="suggested-action" rows="3"></textarea>
+        
+        <button type="submit">Submit Report</button>
+    </form>
+</body>
+</html>

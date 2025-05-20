@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trail Approval</title>
+  <link rel="stylesheet" href={%  static  "style.css"%}>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="homepage.html" class="home-button">
+        <div class="logo-wrapper">
+          <img src="https://media-hosting.imagekit.io/b4d5d1a98e174ca2/logo.jpg?Expires=1838444962&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=c17--Z~YwhPpaco3ieSYONB0~MEGEsuMQkcbMwkulVi2L3MmtEg~xI14BJcBDE-SjxO6zDR7pJxsq~ny66MK6xcDiHuCyxoC99eQHSSIp83gc74Egf7M5vqbtMcCuYbz6fSeDqrGw2juFAj48G-NU8TMLBsMTU2A9YALBTqoZyayhqFEIektRaxiIDpQ~TABKKwKxlxc2gpUBAB8DXRp1jjitPHSzrzwLTsqQe-Qxxhw5A2-Eq3cr5BPLcaPq74-sKXSuc~WnLE9iU9v6Cy68nRn6V38UMaRM7AkMx36Z~qidjW-KN9roo07Lc1C2eRKTD44RqbalG-~38f9d4dA7A__" alt="Outdoor Adventure Hiketracker Logo" class="logo-img">
+        </div>
+      </a>
+      <h1>Admin Dashboard</h1>
+    </div>
+    <nav>
+      <a href="trail-approval.html" class="active">Trail Approval</a>
+      <a href="user-management.html">User Management</a>
+      <a href="reported-content.html">Reported Content</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="form-card">
+      <h2>Trail Approval Form</h2>
+      <form id="approval-form">
+        <label>
+          Trail Name:
+          <select id="trail_name_approval">
+            <option disabled selected>Select a trail</option>
+          </select>
+          <div id="trail_name_error" class="error-message">Please select a trail</div>
+        </label>
+
+        <label>
+          Edit Submitted Trail Data:
+          <textarea id="edit_data_approval" placeholder="Correct typos or update missing details..." rows="10"></textarea>
+        </label>
+
+        <label>
+          Approval Status:
+          <select id="approval_status">
+            <option disabled selected>Select status</option>
+            <option>Pending</option>
+            <option>Approved</option>
+            <option>Rejected</option>
+          </select>
+          <div id="approval_status_error" class="error-message">Please select an approval status</div>
+        </label>
+
+        <label>
+          Admin Comments:
+          <textarea id="admin_comments" placeholder="Optional comments..."></textarea>
+          <div id="admin_comments_error" class="error-message">Invalid characters in comments</div>
+        </label>
+
+        <label>
+          Badges:
+          <select id="badges">
+            <option disabled selected>Select Badge</option>
+            <option>🛡️ Completed Trail Badge 🛡️</option>
+          </select>
+        </label>
+
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+  </main>
+  
+  <div id="successPopup" class="popup">
+    <p>Trail Approval Submitted Successfully!</p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+
+  <script>
+    window.onload = function() {
+      const allTrails = JSON.parse(localStorage.getItem('submittedTrails')) || [];
+      const pendingTrails = allTrails.filter(trail => trail.status === 'Pending');
+
+      const trailNameSelect = document.getElementById('trail_name_approval');
+      const approvalStatusSelect = document.getElementById('approval_status');
+      const editDataTextarea = document.getElementById('edit_data_approval');
+      const adminCommentsTextarea = document.getElementById('admin_comments');
+      
+     
+      if (pendingTrails.length > 0) {
+        pendingTrails.forEach(trail => {
+          const option = document.createElement('option');
+          option.value = trail.trail_name;
+          option.textContent = trail.trail_name;
+          trailNameSelect.appendChild(option);
+        });
+      }
+      
+
+      trailNameSelect.addEventListener('change', function() {
+        const selectedTrailName = this.value;
+        const selectedTrail = allTrails.find(trail => trail.trail_name === selectedTrailName);
+
+        if (selectedTrail) {
+          editDataTextarea.value = 
+            `Location: ${selectedTrail.location}
+            GPS Coordinates: ${selectedTrail.gps || 'N/A'}
+            Start/End: ${selectedTrail.start_end || 'N/A'}
+            Distance: ${selectedTrail.distance} km
+            Elevation Gain: ${selectedTrail.elevation} ft
+            Difficulty: ${selectedTrail.difficulty}
+            Trail Type: ${selectedTrail.trail_type}
+            Estimated Time: ${selectedTrail.estimated_time}
+            Conditions: ${selectedTrail.conditions || 'N/A'}
+            Accessibility: ${selectedTrail.accessibility || 'N/A'}
+            Hiker/Biker: ${selectedTrail.hiker_biker}
+            Completed As: ${selectedTrail.completed_as}
+            Photos: ${selectedTrail.photos ? selectedTrail.photos.join(', ') : 'None'}
+            Notes: ${selectedTrail.notes || 'N/A'}`;
+        }
+      });
+      
+     
+      const approvalForm = document.getElementById('approval-form');
+      approvalForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        
+        let isValid = true;
+        
+       
+        const selectedTrailName = trailNameSelect.value;
+        if (!selectedTrailName || selectedTrailName === "Select a trail") {
+          document.getElementById('trail_name_error').style.display = 'block';
+          isValid = false;
+        } else {
+          document.getElementById('trail_name_error').style.display = 'none';
+        }
+        
+        
+        const selectedStatus = approvalStatusSelect.value;
+        if (!selectedStatus || selectedStatus === "Select status") {
+          document.getElementById('approval_status_error').style.display = 'block';
+          isValid = false;
+        } else {
+          document.getElementById('approval_status_error').style.display = 'none';
+        }
+        
+        
+        const adminComments = adminCommentsTextarea.value;
+        if (adminComments.length > 0) {
+         
+          const validCommentsRegex = /^[a-zA-Z0-9\s.,\-]+$/;
+          if (!validCommentsRegex.test(adminComments)) {
+            document.getElementById('admin_comments_error').style.display = 'block';
+            isValid = false;
+          } else {
+            document.getElementById('admin_comments_error').style.display = 'none';
+          }
+        } else {
+          document.getElementById('admin_comments_error').style.display = 'none';
+        }
+        
+        
+        if (isValid) {
+          
+          if (selectedStatus !== 'Pending' && selectedTrailName) {
+            const allTrails = JSON.parse(localStorage.getItem('submittedTrails')) || [];
+            const updatedTrails = allTrails.map(trail => {
+              if (trail.trail_name === selectedTrailName) {
+                trail.status = selectedStatus; 
+              }
+              return trail;
+            });
+
+            localStorage.setItem('submittedTrails', JSON.stringify(updatedTrails));
+            
+           
+            const optionToRemove = trailNameSelect.querySelector(`option[value="${selectedTrailName}"]`);
+            if (optionToRemove) {
+              trailNameSelect.removeChild(optionToRemove); 
+            }
+          }
+
+          
+          showPopup();
+          
+       
+          approvalForm.reset();
+        }
+      });
+    };
+    
+    function showPopup() {
+      const popup = document.getElementById('successPopup');
+      popup.style.display = 'block'; 
+    }
+    
+    function closePopup() {
+      const popup = document.getElementById('successPopup');
+      popup.style.display = 'none'; 
+      window.location.href = "homepage.html"; 
+    }
+  </script>
+</body>
+</html>

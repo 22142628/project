@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    margin-top: 150px;
+    margin-left: 500px;
+    max-width: 600px;
+    padding: 20px;
+    border-radius: 10px;
+    
+    background-image: url('https://images.macrumors.com/t/4KLyziXaK4QH9WrIVu6CN9i3z3U=/1600x0/article-new/2024/08/macos-sequoia-hidden-wallpaper.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+    color: rgba(255, 255, 255, 0.8);
+    
+}
+
+form {
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 12px;
+    background: rgba(0, 20, 0, 0.25); 
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 255, 0, 0.1);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+textarea, input, select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 80, 0, 0.3);
+    background: rgba(0, 10, 0, 0.3);
+    color: white;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+textarea:focus, 
+input:focus, 
+select:focus {
+    outline: none;
+    border-color: rgba(0, 180, 0, 0.5);
+    background: rgba(0, 20, 0, 0.4);
+    box-shadow: 0 0 0 2px rgba(0, 150, 0, 0.2);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 6px;
+    border: none;
+    background: linear-gradient(to bottom, #003502, #002a02);
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 2px 5px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+button:hover {
+    background: linear-gradient(to bottom, #043b06, #033005);
+    transform: translateY(-1px);
+    box-shadow: 
+        0 3px 8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.3),
+        inset 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+::placeholder {
+    color: rgba(200, 255, 200, 0.5);
+    opacity: 1;
+}
+

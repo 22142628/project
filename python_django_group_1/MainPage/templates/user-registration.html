@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <link rel="stylesheet" href={% static "projectC.css"%}>
+</head>
+<body>
+
+  <div class="form-container">
+
+    <form id="registrationForm" action="/submit_registration" method="POST">
+      <label for="fullname">Full Name *</label>
+      <input type="text" id="fullname" name="fullname" required>
+
+      <label for="email">Email Address *</label>
+      <input type="email" id="email" name="email" required>
+      <div class="error-message" id="email-error">Please enter a valid email address</div>
+
+      <label for="contact">Contact Info *</label>
+      <input type="text" id="contact" name="contact" required>
+
+      <label for="password">Password *</label>
+      <input type="password" id="password" name="password" required>
+      <div class="password-requirements">
+        <div class="requirement invalid" id="length-req">Minimum 10 characters</div>
+        <div class="requirement invalid" id="space-req">No spaces allowed</div>
+        <div class="requirement invalid" id="upper-req">At least 1 uppercase letter</div>
+        <div class="requirement invalid" id="lower-req">At least 1 lowercase letter</div>
+        <div class="requirement invalid" id="number-req">At least 1 number</div>
+        <div class="requirement invalid" id="special-req">At least 1 special character (!@#$%^()-)</div>
+      </div>
+
+      <label for="confirm-password">Confirm Password *</label>
+      <input type="password" id="confirm-password" name="confirm_password" required>
+      <div class="error-message" id="password-match-error">Passwords do not match</div>
+
+      <input type="submit" value="Register">
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get all the form elements
+      const form = document.getElementById('registrationForm');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const confirmPasswordInput = document.getElementById('confirm-password');
+      
+      // Get all the requirement elements
+      const lengthReq = document.getElementById('length-req');
+      const spaceReq = document.getElementById('space-req');
+      const upperReq = document.getElementById('upper-req');
+      const lowerReq = document.getElementById('lower-req');
+      const numberReq = document.getElementById('number-req');
+      const specialReq = document.getElementById('special-req');
+      const matchError = document.getElementById('password-match-error');
+      const emailError = document.getElementById('email-error');
+      
+      // Email validation
+      emailInput.addEventListener('input', function() {
+        const email = this.value;
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        emailError.style.display = email && !isValidEmail ? 'block' : 'none';
+      });
+
+      // Password validation
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        
+        // Update validation for each requirement
+        toggleClass(lengthReq, password.length >= 10);
+        toggleClass(spaceReq, !/\s/.test(password));
+        toggleClass(upperReq, /[A-Z]/.test(password));
+        toggleClass(lowerReq, /[a-z]/.test(password));
+        toggleClass(numberReq, /[0-9]/.test(password));
+        toggleClass(specialReq, /[!@#$%^()-]/.test(password)); // Updated special chars
+        
+        // Check password confirmation if it has a value
+        if (confirmPasswordInput.value) {
+          matchError.style.display = password !== confirmPasswordInput.value ? 'block' : 'none';
+        }
+      });
+
+      // Confirm password validation
+      confirmPasswordInput.addEventListener('input', function() {
+        const password = passwordInput.value;
+        const confirmPassword = this.value;
+        matchError.style.display = password && confirmPassword && password !== confirmPassword ? 'block' : 'none';
+      });
+
+      // Form submission
+      form.addEventListener('submit', function(event) {
+        // Prevent default form submission
+        event.preventDefault();
+        
+        // Email validation
+        const email = emailInput.value;
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        emailError.style.display = !isValidEmail ? 'block' : 'none';
+        
+        // Password validation
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        // Check if password meets all requirements
+        const isValidPassword = password.length >= 10 &&
+                              !/\s/.test(password) &&
+                              /[A-Z]/.test(password) &&
+                              /[a-z]/.test(password) &&
+                              /[0-9]/.test(password) &&
+                              /[!@#$%^()-]/.test(password); // Updated special chars
+        
+        // Check if passwords match
+        const passwordsMatch = password === confirmPassword;
+        matchError.style.display = !passwordsMatch ? 'block' : 'none';
+
+        // If all validation passes
+        if (isValidEmail && isValidPassword && passwordsMatch) {
+          // Show success popup
+          const popup = document.createElement('div');
+          popup.className = 'nature-popup';
+          popup.textContent = 'THANK YOU FOR REGISTERING NATURE LOVER';
+          document.body.appendChild(popup);
+          
+          // Redirect after delay
+          setTimeout(() => {
+            window.location.href = 'homepage.html';
+          }, 2500);
+        } else {
+          // Focus on the first input with an error
+          if (!isValidEmail) {
+            emailInput.focus();
+          } else if (!isValidPassword) {
+            passwordInput.focus();
+            // Find first failing requirement and scroll to it
+            if (password.length < 10) {
+              lengthReq.scrollIntoView({behavior:'smooth'});
+            } else if (/\s/.test(password)) {
+              spaceReq.scrollIntoView({behavior:'smooth'});
+            } else if (!/[A-Z]/.test(password)) {
+              upperReq.scrollIntoView({behavior:'smooth'});
+            } else if (!/[a-z]/.test(password)) {
+              lowerReq.scrollIntoView({behavior:'smooth'});
+            } else if (!/[0-9]/.test(password)) {
+              numberReq.scrollIntoView({behavior:'smooth'});
+            } else if (!/[!@#$%^()-]/.test(password)) {
+              specialReq.scrollIntoView({behavior:'smooth'});
+            }
+          } else if (!passwordsMatch) {
+            confirmPasswordInput.focus();
+          }
+        }
+      });
+
+      // Helper function to toggle classes
+      function toggleClass(el, isValid) {
+        el.classList.toggle('valid', isValid);
+        el.classList.toggle('invalid', !isValid);
+      }
+    });
+  </script>
+</body>
+</html>

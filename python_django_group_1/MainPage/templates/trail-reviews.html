@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trail Review & Rating</title>
+    <link rel="stylesheet" href={% static "projectC.css" %}>
+</head>
+<body>
+    <form class="review-form" id="trailReviewForm">
+        <h1>Trail Review</h1>
+        
+        <div class="form-group">
+            <label for="trailName" class="required">Trail Name</label>
+            <input type="text" id="trailName" name="trailName" required>
+            <div class="error" id="trailNameError">Please enter the trail name</div>
+        </div>
+        
+        <div class="form-group">
+            <label class="required">Rating</label>
+            <div class="rating-container">
+                <div class="rating-option">
+                    <input type="radio" id="rating1" name="rating" value="1" required>
+                    <label for="rating1">1</label>
+                </div>
+                <div class="rating-option">
+                    <input type="radio" id="rating2" name="rating" value="2">
+                    <label for="rating2">2</label>
+                </div>
+                <div class="rating-option">
+                    <input type="radio" id="rating3" name="rating" value="3">
+                    <label for="rating3">3</label>
+                </div>
+                <div class="rating-option">
+                    <input type="radio" id="rating4" name="rating" value="4">
+                    <label for="rating4">4</label>
+                </div>
+                <div class="rating-option">
+                    <input type="radio" id="rating5" name="rating" value="5">
+                    <label for="rating5">5</label>
+                </div>
+            </div>
+            <div class="error" id="ratingError">Please select a rating</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="reviewComment">Review Comment</label>
+            <textarea id="reviewComment" name="reviewComment" placeholder="Share your experience..."></textarea>
+        </div>
+        
+        <button type="submit">Submit Review</button>
+    </form>
+</body>
+</html>
