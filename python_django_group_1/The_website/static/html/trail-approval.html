@@ -1,14 +1,15 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Trail Approval</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Admin Dashboard - Trail Approval</title>
+  <link rel="stylesheet" href="trail-approval.css"/>
 </head>
 <body>
-  <header>
+  <div class="background-overlay"></div>
+  
+  <header class="admin-header">
     <div class="header-left">
       <a href="homepage.html" class="home-button">
         <div class="logo-wrapper">
@@ -17,189 +18,56 @@
       </a>
       <h1>Admin Dashboard</h1>
     </div>
-    <nav>
+    <nav class="admin-nav">
       <a href="trail-approval.html" class="active">Trail Approval</a>
-      <a href="user-management.html">User Management</a>
-      <a href="reported-content.html">Reported Content</a>
     </nav>
   </header>
 
-  <main>
-    <section class="form-card">
-      <h2>Trail Approval Form</h2>
+  <div class="container admin-container">
+    <section class="form-container approval-form-container">
+      <h2>Trail Approval</h2>
+      <p class="form-subtitle">Review and manage trail submissions from users</p>
+      
       <form id="approval-form">
-        <label>
-          Trail Name:
-          <select id="trail_name_approval">
-            <option disabled selected>Select a trail</option>
+        <div class="form-group">
+          <label for="trail_name_approval">Trail Name <span class="required">*</span></label>
+          <select id="trail_name_approval" required>
+            <option disabled selected>Select a trail for review</option>
           </select>
-          <div id="trail_name_error" class="error-message">Please select a trail</div>
-        </label>
+        </div>
 
-        <label>
-          Edit Submitted Trail Data:
-          <textarea id="edit_data_approval" placeholder="Correct typos or update missing details..." rows="10"></textarea>
-        </label>
+        <div class="form-group">
+          <label for="edit_data_approval">Edit Submitted Trail Data</label>
+          <textarea id="edit_data_approval" placeholder="Review and edit trail details as needed..." rows="10" class="trail-data-textarea"></textarea>
+        </div>
 
-        <label>
-          Approval Status:
-          <select id="approval_status">
+        <div class="form-group">
+          <label for="approval_status">Approval Status <span class="required">*</span></label>
+          <select id="approval_status" required>
             <option disabled selected>Select status</option>
-            <option>Pending</option>
-            <option>Approved</option>
-            <option>Rejected</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
           </select>
-          <div id="approval_status_error" class="error-message">Please select an approval status</div>
-        </label>
+        </div>
 
-        <label>
-          Admin Comments:
-          <textarea id="admin_comments" placeholder="Optional comments..."></textarea>
-          <div id="admin_comments_error" class="error-message">Invalid characters in comments</div>
-        </label>
+        <div class="form-group">
+          <label for="admin_comments">Admin Comments</label>
+          <textarea id="admin_comments" placeholder="Add any notes or feedback for the user..." rows="4"></textarea>
+        </div>
 
-        <label>
-          Badges:
-          <select id="badges">
-            <option disabled selected>Select Badge</option>
-            <option>🛡️ Completed Trail Badge 🛡️</option>
-          </select>
-        </label>
+        
 
-        <button type="submit">Submit</button>
+        <button type="submit" class="submit-btn">Submit Approval Decision</button>
       </form>
     </section>
-  </main>
-  
-  <div id="successPopup" class="popup">
-    <p>Trail Approval Submitted Successfully!</p>
-    <button onclick="closePopup()">OK</button>
   </div>
 
-  <script>
-    window.onload = function() {
-      const allTrails = JSON.parse(localStorage.getItem('submittedTrails')) || [];
-      const pendingTrails = allTrails.filter(trail => trail.status === 'Pending');
+  <div id="successPopup" class="nature-popup">
+    <p>Trail Approval Decision Submitted Successfully!</p>
+    <button onclick="closePopup()" class="popup-btn">Return to Dashboard</button>
+  </div>
 
-      const trailNameSelect = document.getElementById('trail_name_approval');
-      const approvalStatusSelect = document.getElementById('approval_status');
-      const editDataTextarea = document.getElementById('edit_data_approval');
-      const adminCommentsTextarea = document.getElementById('admin_comments');
-      
-     
-      if (pendingTrails.length > 0) {
-        pendingTrails.forEach(trail => {
-          const option = document.createElement('option');
-          option.value = trail.trail_name;
-          option.textContent = trail.trail_name;
-          trailNameSelect.appendChild(option);
-        });
-      }
-      
-
-      trailNameSelect.addEventListener('change', function() {
-        const selectedTrailName = this.value;
-        const selectedTrail = allTrails.find(trail => trail.trail_name === selectedTrailName);
-
-        if (selectedTrail) {
-          editDataTextarea.value = 
-            `Location: ${selectedTrail.location}
-            GPS Coordinates: ${selectedTrail.gps || 'N/A'}
-            Start/End: ${selectedTrail.start_end || 'N/A'}
-            Distance: ${selectedTrail.distance} km
-            Elevation Gain: ${selectedTrail.elevation} ft
-            Difficulty: ${selectedTrail.difficulty}
-            Trail Type: ${selectedTrail.trail_type}
-            Estimated Time: ${selectedTrail.estimated_time}
-            Conditions: ${selectedTrail.conditions || 'N/A'}
-            Accessibility: ${selectedTrail.accessibility || 'N/A'}
-            Hiker/Biker: ${selectedTrail.hiker_biker}
-            Completed As: ${selectedTrail.completed_as}
-            Photos: ${selectedTrail.photos ? selectedTrail.photos.join(', ') : 'None'}
-            Notes: ${selectedTrail.notes || 'N/A'}`;
-        }
-      });
-      
-     
-      const approvalForm = document.getElementById('approval-form');
-      approvalForm.addEventListener('submit', function(e) {
-        e.preventDefault(); 
-        
-        let isValid = true;
-        
-       
-        const selectedTrailName = trailNameSelect.value;
-        if (!selectedTrailName || selectedTrailName === "Select a trail") {
-          document.getElementById('trail_name_error').style.display = 'block';
-          isValid = false;
-        } else {
-          document.getElementById('trail_name_error').style.display = 'none';
-        }
-        
-        
-        const selectedStatus = approvalStatusSelect.value;
-        if (!selectedStatus || selectedStatus === "Select status") {
-          document.getElementById('approval_status_error').style.display = 'block';
-          isValid = false;
-        } else {
-          document.getElementById('approval_status_error').style.display = 'none';
-        }
-        
-        
-        const adminComments = adminCommentsTextarea.value;
-        if (adminComments.length > 0) {
-         
-          const validCommentsRegex = /^[a-zA-Z0-9\s.,\-]+$/;
-          if (!validCommentsRegex.test(adminComments)) {
-            document.getElementById('admin_comments_error').style.display = 'block';
-            isValid = false;
-          } else {
-            document.getElementById('admin_comments_error').style.display = 'none';
-          }
-        } else {
-          document.getElementById('admin_comments_error').style.display = 'none';
-        }
-        
-        
-        if (isValid) {
-          
-          if (selectedStatus !== 'Pending' && selectedTrailName) {
-            const allTrails = JSON.parse(localStorage.getItem('submittedTrails')) || [];
-            const updatedTrails = allTrails.map(trail => {
-              if (trail.trail_name === selectedTrailName) {
-                trail.status = selectedStatus; 
-              }
-              return trail;
-            });
-
-            localStorage.setItem('submittedTrails', JSON.stringify(updatedTrails));
-            
-           
-            const optionToRemove = trailNameSelect.querySelector(`option[value="${selectedTrailName}"]`);
-            if (optionToRemove) {
-              trailNameSelect.removeChild(optionToRemove); 
-            }
-          }
-
-          
-          showPopup();
-          
-       
-          approvalForm.reset();
-        }
-      });
-    };
-    
-    function showPopup() {
-      const popup = document.getElementById('successPopup');
-      popup.style.display = 'block'; 
-    }
-    
-    function closePopup() {
-      const popup = document.getElementById('successPopup');
-      popup.style.display = 'none'; 
-      window.location.href = "homepage.html"; 
-    }
-  </script>
+  <script src="trail-approval.js"></script>
 </body>
 </html>

@@ -1,114 +1,56 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="user-login.css" />
-  <title>Login</title>
-  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trail Tracker - Login</title>
+  <link rel="stylesheet" href="user-login.css">
 </head>
 <body>
-  <h1>Login</h1>
-  <form id="login-form">
-    <label for="username">Username</label>
-    <input type="text" id="username" placeholder="Enter Username" />
-
-    <label for="password">Password</label>
-    <input type="password" id="password" placeholder="Enter Password" />
-
-    <button type="submit">Log In</button>
-  </form>
-
-  <div class="error-message" id="error-message"></div>
-
-  <script>
-    function redirectToHomepage() {
-      window.location.href = "homepage-dash.html";
-    }
-
-    document.getElementById("login-form").addEventListener("submit", function(event) {
-      event.preventDefault();
-      
-      
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      
-      
-      document.getElementById("error-message").textContent = "";
-      
-      
-      if (username === "") {
-        document.getElementById("error-message").textContent = "Username is required!";
-        return;
-      }
-      
-      if (password === "") {
-        document.getElementById("error-message").textContent = "Password is required!";
-        return;
-      }
-
-      
-      const adminAccounts = [
-        { username: "Anastasia", password: "22150049" },
-        { username: "Shadman",   password: "22102457" },
-        { username: "Robinson",  password: "22142628" },
-        { username: "Kritika",   password: "22076631" }
-      ];
-
-      
-      const regularUser = {
-        username: "Shaddy", 
-        password: "Jami"
-      };
-
-      
-      const isAdmin = adminAccounts.some(acc =>
-        acc.username === username && acc.password === password
-      );
-
-      
-      const isRegularUser = 
-        username === regularUser.username && password === regularUser.password;
-
-      if (isAdmin) {
-        
-        showAdminPopup();
-      } else if (isRegularUser) {
-        
-        showNaturePopup();
-      } else {
-      
-        document.getElementById("error-message").textContent =
-          "Invalid username or password!";
-      }
-    });
+  <div class="background-overlay"></div>
+  
+  <div class="container">
+    <div class="logo-container">
+      <h1>TRAIL<span>TRACKER</span></h1>
+      <p class="tagline">Welcome back, explorer!</p>
+    </div>
     
-    function showNaturePopup() {
-      const popup = document.createElement('div');
-      popup.className = 'popup nature-popup';
-      popup.innerHTML = `
-        <h3>Login Successful!</h3>
-        <p>Welcome to Nature's Paradise</p>
-        <button onclick="redirectToHomepage()">Continue</button>
-      `;
-      document.body.appendChild(popup);
-    }
-    
-    function showAdminPopup() {
-      const popup = document.createElement('div');
-      popup.className = 'popup admin-popup';
-      popup.innerHTML = `
-        <h3>Welcome back Admin!</h3>
-        <p>You have administrator privileges</p>
-        <button onclick="redirectToAdminPage()">Continue</button>
-      `;
-      document.body.appendChild(popup);
-    }
-    
-    function redirectToAdminPage() {
-      window.location.href = "trail-approval.html";
-    }
-  </script>
+    <div class="form-container">
+      <h2>Account Login</h2>
+      <p class="form-subtitle">Access your hiking dashboard</p>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="username">Username/Email <span class="required">*</span></label>
+          <input type="text" id="username" placeholder="Enter your username">
+          <div class="error-message" id="username-error">Please enter your username</div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password <span class="required">*</span></label>
+          <input type="password" id="password" placeholder="Enter your password">
+          <div class="error-message" id="password-error">Please enter your password</div>
+        </div>
+
+        <div class="error-message login-error-container" id="login-error"></div>
+
+        <div class="options-row">
+          <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember">
+            <label for="remember" class="checkbox-label">Remember me</label>
+          </div>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="submit-btn">Log In</button>
+      </form>
+      
+      <div class="register-link">
+        Don't have an account? <a href="index.html">Sign up</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="user-login.js"></script>
 </body>
 </html>
