@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Outdoor Adventure & Hike Tracker - Australia{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- Header/Navbar -->
+<header>
+    <div class="navbar">
+        <div class="logo-container">
+            <img src="{% static 'images/logo.jpg' %}" alt="Outdoor Adventure Hiketracker Logo" class="logo-img">
+            <a href="{% url 'base' %}" class="logo-text">
+                Outdoor Adventure & Hike Tracker
+                <span>AUSTRALIA</span>
+            </a>
+        </div>
+
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <ul class="menu">
+            <li>
+                <a  href="#"><i class="fas fa-home"></i> Home</a>
+                <ul class="dropdown">
+                    <li><a href="{% url 'base' %}"><i class="fas fa-newspaper"></i> Latest Trail Updates</a></li>
+                    <li><a href="{% url 'base' %}"><i class="fas fa-star"></i> Featured Adventures</a></li>
+                </ul>
+            </li>    
+            
+            <li>
+                <a  href="#"><i class="fas fa-route"></i> Trails</a>
+                <ul class="dropdown">
+                    <li><a href="#" id="search-trail-btn"><i class="fas fa-search"></i> Search Trails</a></li>
+                    <li><a href="{% url 'trail_submission' %}"><i class="fas fa-plus-circle"></i> Add New Trail</a></li>
+                </ul>
+            </li>
+            {% if user.is_registered_user %}
+            <button class="profile-item"><a href="{% url 'profile' %}"><i class="fas fa-user"></i>Profile</a></button>
+            
+            <div class="auth-buttons">
+                {% if user.is_authenticated %}
+                    <button class="auth-button"><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></button>
+                {% else %}
+                    <button class="auth-button"><a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Log In</a></button>
+                    <button class="auth-button"><a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Sign Up</a></button>
+                {% endif %}
+            </div>
+            
+            {% if user.is_staff %}
+            <li class="admin-item">
+                <a href="{% url 'admin_dashboard' %}"><i class="fas fa-lock"></i> Admin</a>
+                <ul class="dropdown">
+                    <li><a href="{% url 'admin_trail_approval' %}"><i class="fas fa-check-circle"></i> Approve New Trails</a></li>
+                    <li><a href="{% url 'admin_reported_content' %}"><i class="fas fa-flag"></i> Review Reported Content</a></li>
+                </ul>
+            </li>
+            {% endif %}
+            
+            <div class="auth-buttons">
+                {% if user.is_authenticated %}
+                    <button class="auth-button"><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></button>
+                {% else %}
+                    <button class="auth-button"><a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Log In</a></button>
+                    <button class="auth-button"><a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Sign Up</a></button>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+</header>
+
+<!-- Search Modal -->
+<div class="search-modal" id="search-modal">
+    <div class="search-container">
+        <div class="search-header">
+            <h2>Search Trails</h2>
+            <button class="close-search" id="close-search">&times;</button>
+        </div>
+        <form class="search-form" id="main-search-form" action="{% url 'trails_search' %}" method="GET">
+            <div class="search-group">
+                <label for="trail-name">Trail Name</label>
+                <input type="text" id="trail-name" name="trail_name" placeholder="Enter trail name">
+                <span class="error-message" id="trail-name-error"></span>
+            </div>
+            
+            <div class="search-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="Enter location">
+                <span class="error-message" id="location-error"></span>
+            </div>
+            
+            <div class="search-group">
+                <label for="difficulty">Difficulty Level</label>
+                <select id="difficulty" name="difficulty">
+                    <option value="">Any Difficulty</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+                <span class="error-message" id="difficulty-error"></span>
+            </div>
+            
+            <div class="search-group">
+                <label for="distance-min">Distance Range (km)</label>
+                <div class="distance-range">
+                    <input type="text" id="distance-min" name="distance_min" placeholder="Min" min="0">
+                    <span>to</span>
+                    <input type="text" id="distance-max" name="distance_max" placeholder="Max" min="0">
+                </div>
+                <span class="error-message" id="distance-error"></span>
+            </div>
+            
+            <div class="search-group">
+                <label for="trail-type">Trail Type</label>
+                <select id="trail-type" name="trail_type">
+                    <option value="">Any Type</option>
+                    <option value="loop">Loop</option>
+                    <option value="out-and-back">Out & Back</option>
+                    <option value="point-to-point">Point-to-Point</option>
+                </select>
+                <span class="error-message" id="trail-type-error"></span>
+            </div>
+            
+            <div class="search-group">
+                <label>Minimum Rating</label>
+                <div class="rating-input">
+                    <div class="rating">
+                        <input type="radio" id="star5" name="rating" value="5">
+                        <label for="star5" title="5 stars">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4" title="4 stars">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3" title="3 stars">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2" title="2 stars">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1" title="1 star">★</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="search-buttons">
+                <button type="submit" class="search-button">Search</button>
+                <button type="reset" class="reset-button">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Main Page Content -->
+<main>
+    {% block content %}
+    {% endblock %}
+</main>s
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        
+        <p>&copy; {% now "Y" %} Outdoor Adventure & Hike Tracker. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- JS files -->
+<script src="{% static 'js/base.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

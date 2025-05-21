@@ -4,25 +4,28 @@
 <head>
   <meta charset="UTF-8">
   <title>User Registration</title>
-  <link rel="stylesheet" href={% static "projectC.css"%}>
+  <link rel="stylesheet" href="projectC.css">
 </head>
 <body>
 
   <div class="form-container">
+    <h2>User Registration</h2>
 
-    <form id="registrationForm" action="/submit_registration" method="POST">
+    <form id="registrationForm" action="/submit_registration" method="POST" novalidate>
       <label for="fullname">Full Name *</label>
-      <input type="text" id="fullname" name="fullname" required>
+      <input type="text" id="fullname" name="fullname">
+      <div class="error-message" id="fullname-error">Please enter your full name</div>
 
       <label for="email">Email Address *</label>
-      <input type="email" id="email" name="email" required>
+      <input type="email" id="email" name="email">
       <div class="error-message" id="email-error">Please enter a valid email address</div>
 
       <label for="contact">Contact Info *</label>
-      <input type="text" id="contact" name="contact" required>
+      <input type="text" id="contact" name="contact">
+      <div class="error-message" id="contact-error">Please enter valid contact information</div>
 
       <label for="password">Password *</label>
-      <input type="password" id="password" name="password" required>
+      <input type="password" id="password" name="password">
       <div class="password-requirements">
         <div class="requirement invalid" id="length-req">Minimum 10 characters</div>
         <div class="requirement invalid" id="space-req">No spaces allowed</div>
@@ -33,7 +36,7 @@
       </div>
 
       <label for="confirm-password">Confirm Password *</label>
-      <input type="password" id="confirm-password" name="confirm_password" required>
+      <input type="password" id="confirm-password" name="confirm_password">
       <div class="error-message" id="password-match-error">Passwords do not match</div>
 
       <input type="submit" value="Register">
@@ -42,99 +45,162 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Get all the form elements
+      
       const form = document.getElementById('registrationForm');
+      const fullnameInput = document.getElementById('fullname');
       const emailInput = document.getElementById('email');
+      const contactInput = document.getElementById('contact');
       const passwordInput = document.getElementById('password');
       const confirmPasswordInput = document.getElementById('confirm-password');
       
-      // Get all the requirement elements
+      
+      const fullnameError = document.getElementById('fullname-error');
+      const emailError = document.getElementById('email-error');
+      const contactError = document.getElementById('contact-error');
+      const matchError = document.getElementById('password-match-error');
+      
+      
       const lengthReq = document.getElementById('length-req');
       const spaceReq = document.getElementById('space-req');
       const upperReq = document.getElementById('upper-req');
       const lowerReq = document.getElementById('lower-req');
       const numberReq = document.getElementById('number-req');
       const specialReq = document.getElementById('special-req');
-      const matchError = document.getElementById('password-match-error');
-      const emailError = document.getElementById('email-error');
       
-      // Email validation
-      emailInput.addEventListener('input', function() {
-        const email = this.value;
+      
+      fullnameError.style.display = 'none';
+      emailError.style.display = 'none';
+      contactError.style.display = 'none';
+      matchError.style.display = 'none';
+      
+      
+      fullnameInput.addEventListener('blur', function() {
+        const fullname = this.value.trim();
+        fullnameError.style.display = !fullname ? 'block' : 'none';
+      });
+      
+      
+      emailInput.addEventListener('blur', function() {
+        const email = this.value.trim();
         const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        emailError.style.display = email && !isValidEmail ? 'block' : 'none';
+        emailError.style.display = !email || !isValidEmail ? 'block' : 'none';
+      });
+      
+      
+      contactInput.addEventListener('blur', function() {
+        const contact = this.value.trim();
+        contactError.style.display = !contact ? 'block' : 'none';
       });
 
-      // Password validation
+      
       passwordInput.addEventListener('input', function() {
         const password = this.value;
         
-        // Update validation for each requirement
+        
         toggleClass(lengthReq, password.length >= 10);
         toggleClass(spaceReq, !/\s/.test(password));
         toggleClass(upperReq, /[A-Z]/.test(password));
         toggleClass(lowerReq, /[a-z]/.test(password));
         toggleClass(numberReq, /[0-9]/.test(password));
-        toggleClass(specialReq, /[!@#$%^()-]/.test(password)); // Updated special chars
+        toggleClass(specialReq, /[!@#$%^()-]/.test(password));
         
-        // Check password confirmation if it has a value
+        
         if (confirmPasswordInput.value) {
           matchError.style.display = password !== confirmPasswordInput.value ? 'block' : 'none';
         }
       });
 
-      // Confirm password validation
+      
       confirmPasswordInput.addEventListener('input', function() {
         const password = passwordInput.value;
         const confirmPassword = this.value;
         matchError.style.display = password && confirmPassword && password !== confirmPassword ? 'block' : 'none';
       });
 
-      // Form submission
+     
       form.addEventListener('submit', function(event) {
-        // Prevent default form submission
+        
         event.preventDefault();
         
-        // Email validation
-        const email = emailInput.value;
-        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        emailError.style.display = !isValidEmail ? 'block' : 'none';
         
-        // Password validation
+        let isValid = true;
+        
+        
+        const fullname = fullnameInput.value.trim();
+        if (!fullname) {
+          fullnameError.style.display = 'block';
+          isValid = false;
+        } else {
+          fullnameError.style.display = 'none';
+        }
+        
+       
+        const email = emailInput.value.trim();
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!email || !isValidEmail) {
+          emailError.style.display = 'block';
+          isValid = false;
+        } else {
+          emailError.style.display = 'none';
+        }
+        
+        
+        const contact = contactInput.value.trim();
+        if (!contact) {
+          contactError.style.display = 'block';
+          isValid = false;
+        } else {
+          contactError.style.display = 'none';
+        }
+        
+        
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
         
-        // Check if password meets all requirements
+        
         const isValidPassword = password.length >= 10 &&
                               !/\s/.test(password) &&
                               /[A-Z]/.test(password) &&
                               /[a-z]/.test(password) &&
                               /[0-9]/.test(password) &&
-                              /[!@#$%^()-]/.test(password); // Updated special chars
+                              /[!@#$%^()-]/.test(password);
         
-        // Check if passwords match
+        if (!isValidPassword) {
+          isValid = false;
+        }
+        
+        
         const passwordsMatch = password === confirmPassword;
-        matchError.style.display = !passwordsMatch ? 'block' : 'none';
+        if (!passwordsMatch) {
+          matchError.style.display = 'block';
+          isValid = false;
+        } else {
+          matchError.style.display = 'none';
+        }
 
-        // If all validation passes
-        if (isValidEmail && isValidPassword && passwordsMatch) {
-          // Show success popup
+        
+        if (isValid) {
+          
           const popup = document.createElement('div');
           popup.className = 'nature-popup';
           popup.textContent = 'THANK YOU FOR REGISTERING NATURE LOVER';
           document.body.appendChild(popup);
           
-          // Redirect after delay
+        
           setTimeout(() => {
             window.location.href = 'homepage.html';
           }, 2500);
         } else {
-          // Focus on the first input with an error
-          if (!isValidEmail) {
+          
+          if (!fullname) {
+            fullnameInput.focus();
+          } else if (!isValidEmail) {
             emailInput.focus();
+          } else if (!contact) {
+            contactInput.focus();
           } else if (!isValidPassword) {
             passwordInput.focus();
-            // Find first failing requirement and scroll to it
+            
             if (password.length < 10) {
               lengthReq.scrollIntoView({behavior:'smooth'});
             } else if (/\s/.test(password)) {
@@ -154,7 +220,7 @@
         }
       });
 
-      // Helper function to toggle classes
+      
       function toggleClass(el, isValid) {
         el.classList.toggle('valid', isValid);
         el.classList.toggle('invalid', !isValid);

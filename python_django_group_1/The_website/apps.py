@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class MainpageConfig(AppConfig):
+class TheWebsiteConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'MainPage'
+    name = 'The_website'
