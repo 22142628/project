@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Outdoor Adventure & Hike Tracker - Australia{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    <div class="search-modal" id="search-modal">
+        <div class="search-container">
+            <div class="search-header">
+                <h2>Search Trails</h2>
+                <button class="close-search" id="close-search">&times;</button>
+            </div>
+            <form class="search-form" id="main-search-form">
+                <div class="search-group">
+                    <label for="trail-name">Trail Name</label>
+                    <input type="text" id="trail-name" placeholder="Enter trail name">
+                    <span class="error-message" id="trail-name-error"></span>
+                </div>
+                
+                <div class="search-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" placeholder="Enter location">
+                    <span class="error-message" id="location-error"></span>
+                </div>
+                
+                <div class="search-group">
+                    <label for="difficulty">Difficulty Level</label>
+                    <select id="difficulty">
+                        <option value="">Any Difficulty</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                    <span class="error-message" id="difficulty-error"></span>
+                </div>
+                
+                <div class="search-group">
+                    <label for="distance-min">Distance Range (km)</label>
+                    <div class="distance-range">
+                        <input type="text" id="distance-min" placeholder="Min" min="0">
+                        <span>to</span>
+                        <input type="text" id="distance-max" placeholder="Max" min="0">
+                    </div>
+                    <span class="error-message" id="distance-error"></span>
+                </div>
+                
+                <div class="search-group">
+                    <label for="trail-type">Trail Type</label>
+                    <select id="trail-type">
+                        <option value="">Any Type</option>
+                        <option value="loop">Loop</option>
+                        <option value="out-and-back">Out & Back</option>
+                        <option value="point-to-point">Point-to-Point</option>
+                    </select>
+                    <span class="error-message" id="trail-type-error"></span>
+                </div>
+                
+                <div class="search-group">
+                    <label>Minimum Rating</label>
+                    <div class="rating-input">
+                        <div class="rating">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5" title="5 stars">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4" title="4 stars">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3" title="3 stars">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2" title="2 stars">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1" title="1 star">★</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="search-actions">
+                    <button type="submit" class="search-button">Search Trails</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your Path. Your Story. One Hike at a Time.</h1>
+            <p class="hero-subtitle">Discover Australia's most breathtaking trails and track your outdoor adventures</p>
+            <button id="hero-search-btn" class="cta-search-button">
+                <i class="fas fa-search"></i> 
+                <span>SEARCH TRAILS</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">1,200+</div>
+                <div class="stat-label">Trails Tracked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">25,000+</div>
+                <div class="stat-label">Adventurers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4.8★</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-image-section">
+        <img src="https://www.exploreoutdoors.vic.gov.au/__data/assets/image/0018/518112/varieties/image_gallery_large.jpg" 
+             alt="Scenic hiking trail" 
+             class="featured-image">
+        <div class="image-overlay">
+            <h3>Explore Victoria's Best Hiking Trails</h3>
+            <p>From coastal walks to mountain treks</p>
+        </div>
+    </section>
+
+    <section class="trails-section">
+        <div class="section-header">
+            <h2>FEATURED TRAILS</h2>
+            <p class="section-subtitle">Discover hand-picked trails recommended by our community</p>
+        </div>
+        <div class="trail-grid" id="trail-results"></div>
+    </section>
+
+    
+
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready for Your Next Adventure?</h2>
+            <p>Join thousands of outdoor enthusiasts tracking their hikes across Australia</p>
+            <div class="cta-buttons">
+                <a href="user-registration.html" class="cta-button primary">Sign Up Free</a>
+                <a href="#" class="cta-button secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+    <script src="{% static 'js/homepage.js' %}"></script>
+{% endblock %}

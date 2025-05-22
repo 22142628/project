@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Outdoor Adventure & Hike Tracker - Australia{% endblock %}
+
+{% block content %}
+<body>
+  <link rel="stylesheet" href="{% static 'css/user-login.css' %}">
+  <div class="background-overlay"></div>
+  <div class="container">
+    <div class="logo-container">
+      <h1>TRAIL<span>TRACKER</span></h1>
+      
+      <p class="tagline">Welcome back, explorer!</p>
+    </div>
+    
+    <div class="form-container">
+      <h2>Account Login</h2>
+      <p class="form-subtitle">Access your hiking dashboard</p>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="username">Username <span class="required">*</span></label>
+          <input type="text" id="username" placeholder="Enter your username">
+          <div class="error-message" id="username-error">Please enter your username</div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password <span class="required">*</span></label>
+          <input type="password" id="password" placeholder="Enter your password">
+          <div class="error-message" id="password-error">Please enter your password</div>
+        </div>
+
+        <div class="error-message login-error-container" id="login-error"></div>
+
+        <div class="options-row">
+          <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember">
+            <label for="remember" class="checkbox-label">Remember me</label>
+          </div>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="submit-btn">Log In</button>
+      </form>
+      
+      <div class="register-link">
+        Don't have an account? <a href="index.html">Sign up</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/user-login.js' %}"></script>
+{% endblock %}
