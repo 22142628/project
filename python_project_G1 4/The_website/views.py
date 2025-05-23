@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import TrailSubmission
-from django.core.serializers.json import DjangoJSONEncoder  # ✅ Fix for Decimal
-import json  # ✅ JSON serialization
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 # USER AUTH VIEWS
 
@@ -21,7 +21,6 @@ def user_login(request):
         return render(request, 'user-login.html', {'error': 'Invalid credentials'})
     return render(request, 'user-login.html')
 
-
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -32,33 +31,58 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, 'user-registration.html', {'form': form})
 
-
 def logout_view(request):
     logout(request)
     return redirect('home')
 
-
 # MAIN HOMEPAGE VIEW
 
 def home(request):
-    query = request.GET.get('q', '')
     trails = TrailSubmission.objects.filter(approval_status='Approved')
 
-    # ✅ Fix: serialize with Decimal support
-    trails_json = json.dumps(list(trails.values()), cls=DjangoJSONEncoder)
+    trail_name = request.GET.get('trail_name', '').strip()
+    location = request.GET.get('location', '').strip()
+    difficulty = request.GET.get('difficulty', '')
+    trail_type = request.GET.get('trail_type', '')
+    min_rating = request.GET.get('min_rating', '')
+    try:
+        min_distance = float(request.GET.get('distance_min', '') or 0)
+        max_distance = float(request.GET.get('distance_max', '') or 9999)
+    except ValueError:
+        min_distance = 0
+        max_distance = 9999
 
-    if query:
-        trails = trails.filter(
-            Q(trail_name__icontains=query) |
-            Q(location__icontains=query) |
-            Q(notes__icontains=query)
-        )
+    if trail_name:
+        trails = trails.filter(trail_name__icontains=trail_name)
+    if location:
+        trails = trails.filter(location__icontains=location)
+    if difficulty:
+        trails = trails.filter(difficulty=difficulty)
+    if trail_type:
+        trails = trails.filter(trail_type=trail_type)
+    trails = trails.filter(distance__gte=min_distance, distance__lte=max_distance)
+
+    trails_json = json.dumps(list(trails.values(
+        'id', 'trail_name', 'location', 'distance', 'difficulty', 'trail_type', 'photos'
+    )), cls=DjangoJSONEncoder)
+
     return render(request, 'homepage.html', {
         'trails': trails,
-        'query': query,
         'trails_json': trails_json
     })
 
+# SEARCH TRAILS VIEW
+
+def search_trails(request):
+    query = request.GET.get('q', '')
+    trails = TrailSubmission.objects.filter(
+        approval_status='Approved',
+        trail_name__icontains=query
+    ) if query else []
+    return render(request, 'search_results.html', {
+        'query': query,
+        'results': trails
+    })
 
 # TRAIL SUBMISSION VIEW
 
@@ -105,7 +129,6 @@ def trail_submission(request):
         'accessibility': accessibility_list
     })
 
-
 # TRAIL APPROVAL VIEW
 
 @login_required
@@ -131,13 +154,11 @@ def trail_approval(request):
     submissions = TrailSubmission.objects.filter(approval_status='Pending').order_by('-submitted_at')
     return render(request, 'trail-approval.html', {'submissions': submissions})
 
-
 # ADDITIONAL VIEWS
 
 @login_required
 def user_profile(request):
     return render(request, 'user-profile.html')
-
 
 @login_required
 def submit_rating(request):
@@ -147,7 +168,6 @@ def submit_rating(request):
         messages.success(request, "Your rating has been submitted.")
     return redirect('home')
 
-
 @login_required
 def submit_comment(request):
     if request.method == 'POST':
@@ -156,11 +176,6 @@ def submit_comment(request):
         messages.success(request, "Your comment has been posted.")
     return redirect('home')
 
-
 @login_required
 def dashboard(request):
     return render(request, 'dashboard.html')
-
-trails = TrailSubmission.objects.filter(approval_status='Approved')
-trails_json = json.dumps(list(trails.values()), cls=DjangoJSONEncoder)
-

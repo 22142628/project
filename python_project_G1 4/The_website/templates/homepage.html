@@ -15,13 +15,55 @@
         <form id="main-search-form" class="search-form">
             <div class="search-group">
                 <label for="trail-name">Trail Name</label>
-                <input type="text" id="trail-name" list="trail-names" placeholder="Enter trail name...">
+                <input type="text" id="trail-name" name="trail_name" list="trail-names" placeholder="Enter trail name...">
                 <datalist id="trail-names">
                     {% for t in trails %}
                         <option value="{{ t.trail_name }}"></option>
                     {% endfor %}
                 </datalist>
-                <div class="error-message" id="trail-name-error"></div>
+            </div>
+
+            <div class="search-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="Enter location...">
+            </div>
+
+            <div class="search-group">
+                <label for="difficulty">Difficulty</label>
+                <select id="difficulty" name="difficulty">
+                    <option value="">Any Difficulty</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+
+            <div class="search-group">
+                <label for="distance-min">Distance (km)</label>
+                <div class="distance-range">
+                    <input type="number" id="distance-min" name="distance_min" placeholder="Min" min="0" step="0.1">
+                    <span>to</span>
+                    <input type="number" id="distance-max" name="distance_max" placeholder="Max" min="0" step="0.1">
+                </div>
+            </div>
+
+            <div class="search-group">
+                <label for="trail-type">Trail Type</label>
+                <select id="trail-type" name="trail_type">
+                    <option value="">Any Type</option>
+                    <option value="Loop">Loop</option>
+                    <option value="Out & Back">Out & Back</option>
+                    <option value="Point to Point">Point to Point</option>
+                </select>
+            </div>
+
+            <div id="rating-stars" class="star-input">
+                <i class="fas fa-star" data-value="1"></i>
+                <i class="fas fa-star" data-value="2"></i>
+                <i class="fas fa-star" data-value="3"></i>
+                <i class="fas fa-star" data-value="4"></i>
+                <i class="fas fa-star" data-value="5"></i>
+                <input type="hidden" name="min_rating" id="min-rating" value="">
             </div>
 
             <div class="search-actions">
@@ -32,7 +74,6 @@
             </div>
         </form>
 
-        <!-- Grid Results -->
         <div id="search-results" class="trail-grid"></div>
     </div>
 </div>
@@ -118,12 +159,28 @@ const searchForm = document.getElementById('main-search-form');
 const trailInput = document.getElementById('trail-name');
 const searchResults = document.getElementById('search-results');
 
-searchForm.addEventListener('submit', function(e) {
+searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const query = trailInput.value.trim().toLowerCase();
-    const matches = trails.filter(t => !query || t.trail_name.toLowerCase().includes(query));
-    searchResults.innerHTML = '';
 
+    const name = document.getElementById('trail-name').value.toLowerCase();
+    const location = document.getElementById('location').value.toLowerCase();
+    const difficulty = document.getElementById('difficulty').value;
+    const trailType = document.getElementById('trail-type').value;
+    const minDist = parseFloat(document.getElementById('distance-min').value) || 0;
+    const maxDist = parseFloat(document.getElementById('distance-max').value) || Infinity;
+    const minRating = parseInt(document.getElementById('min-rating').value) || 0;
+
+    const matches = trails.filter(t => {
+        return (
+            (!name || t.trail_name.toLowerCase().includes(name)) &&
+            (!location || t.location.toLowerCase().includes(location)) &&
+            (!difficulty || t.difficulty === difficulty) &&
+            (!trailType || t.trail_type === trailType) &&
+            (t.distance >= minDist && t.distance <= maxDist)
+        );
+    });
+
+    searchResults.innerHTML = '';
     if (matches.length === 0) {
         searchResults.innerHTML = '<p>No trails found.</p>';
     } else {
@@ -147,6 +204,7 @@ searchForm.addEventListener('submit', function(e) {
     }
 });
 
+
 document.getElementById('hero-search-btn').addEventListener('click', function() {
     document.getElementById('search-modal').style.display = 'flex';
 });
@@ -154,6 +212,27 @@ document.getElementById('hero-search-btn').addEventListener('click', function() 
 document.getElementById('close-search').addEventListener('click', function() {
     document.getElementById('search-modal').style.display = 'none';
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const stars = document.querySelectorAll('#rating-stars .fa-star');
+    const input = document.getElementById('min-rating');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = parseInt(star.getAttribute('data-value'));
+            input.value = value;
+            updateStarUI(value);
+        });
+    });
+
+    function updateStarUI(value) {
+        stars.forEach(star => {
+            const starValue = parseInt(star.getAttribute('data-value'));
+            star.classList.toggle('selected', starValue <= value);
+        });
+    }
+});
+
 </script>
 
 <script src="{% static 'js/homepage.js' %}"></script>

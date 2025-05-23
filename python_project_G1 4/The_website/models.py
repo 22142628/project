@@ -22,6 +22,7 @@ class TrailSubmission(models.Model):
         choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')],
         default='Pending'
     )
+    admin_comments = models.TextField(blank=True)  # ✅ New field
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

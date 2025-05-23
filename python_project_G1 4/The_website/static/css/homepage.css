@@ -1436,3 +1436,14 @@ footer {
       }
       
 }
+
+.star-input .fa-star {
+    font-size: 1.5em;
+    color: #ccc;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: color 0.2s;
+}
+.star-input .fa-star.selected {
+    color: #f39c12;
+}
