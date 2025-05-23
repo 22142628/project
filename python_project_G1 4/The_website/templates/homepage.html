@@ -6,6 +6,7 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
 
+<!-- Search Modal -->
 <div class="search-modal" id="search-modal">
     <div class="search-container">
         <div class="search-header">
@@ -22,12 +23,10 @@
                     {% endfor %}
                 </datalist>
             </div>
-
             <div class="search-group">
                 <label for="location">Location</label>
                 <input type="text" id="location" name="location" placeholder="Enter location...">
             </div>
-
             <div class="search-group">
                 <label for="difficulty">Difficulty</label>
                 <select id="difficulty" name="difficulty">
@@ -37,7 +36,6 @@
                     <option value="Hard">Hard</option>
                 </select>
             </div>
-
             <div class="search-group">
                 <label for="distance-min">Distance (km)</label>
                 <div class="distance-range">
@@ -46,7 +44,6 @@
                     <input type="number" id="distance-max" name="distance_max" placeholder="Max" min="0" step="0.1">
                 </div>
             </div>
-
             <div class="search-group">
                 <label for="trail-type">Trail Type</label>
                 <select id="trail-type" name="trail_type">
@@ -56,7 +53,6 @@
                     <option value="Point to Point">Point to Point</option>
                 </select>
             </div>
-
             <div id="rating-stars" class="star-input">
                 <i class="fas fa-star" data-value="1"></i>
                 <i class="fas fa-star" data-value="2"></i>
@@ -65,7 +61,6 @@
                 <i class="fas fa-star" data-value="5"></i>
                 <input type="hidden" name="min_rating" id="min-rating" value="">
             </div>
-
             <div class="search-actions">
                 <button type="submit" class="search-button">
                     <i class="fas fa-search"></i>
@@ -73,11 +68,11 @@
                 </button>
             </div>
         </form>
-
         <div id="search-results" class="trail-grid"></div>
     </div>
 </div>
 
+<!-- Hero -->
 <section class="hero">
     <div class="hero-content">
         <h1>Your Path. Your Story. One Hike at a Time.</h1>
@@ -89,6 +84,7 @@
     </div>
 </section>
 
+<!-- Stats -->
 <section class="stats-section">
     <div class="stats-container">
         <div class="stat-item"><div class="stat-number">1,200+</div><div class="stat-label">Trails Tracked</div></div>
@@ -97,6 +93,7 @@
     </div>
 </section>
 
+<!-- Featured Image -->
 <section class="featured-image-section">
     <img src="https://www.exploreoutdoors.vic.gov.au/__data/assets/image/0018/518112/varieties/image_gallery_large.jpg" 
          alt="Scenic hiking trail" 
@@ -107,14 +104,44 @@
     </div>
 </section>
 
+<!-- Featured Trails -->
 <section class="trails-section">
     <div class="section-header">
         <h2>FEATURED TRAILS</h2>
         <p class="section-subtitle">Discover hand-picked trails recommended by our community</p>
     </div>
-    <div class="trail-grid" id="trail-results"></div>
+    <div class="trail-grid">
+        {% for trail in featured_trails %}
+            <div class="trail-card">
+                <div class="card-image">
+                    {% if trail.photos %}
+                        <img src="{{ trail.photos.url }}" alt="{{ trail.trail_name }}">
+                    {% else %}
+                        <div class="no-img">No Image</div>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h4>{{ trail.trail_name }}</h4>
+                    <div class="trail-meta-bar">
+                        <span><i class="fas fa-map-marker-alt"></i> {{ trail.location }}</span>
+                        <span><i class="fas fa-road"></i> {{ trail.distance }} km</span>
+                        <span><i class="fas fa-mountain"></i> {{ trail.difficulty }}</span>
+                        <span><i class="fas fa-star"></i> {{ trail.avg_rating|default:"N/A" }}</span>
+                    </div>
+                    <div class="trail-description">
+                        <p>{{ trail.description|default:"No description provided." }}</p>
+                    </div>
+                    <div class="trail-comments">
+                        <h5>Comments & Ratings</h5>
+                        <p>Coming soon...</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </section>
 
+<!-- Rating & Comments -->
 <section class="rating-comment-section">
     <div class="section-header"><h2>Share Your Experience</h2></div>
     {% if user.is_authenticated %}
@@ -130,7 +157,6 @@
             </select>
             <button type="submit">Submit Rating</button>
         </form>
-
         <form method="POST" action="{% url 'submit-comment' %}">{% csrf_token %}
             <textarea name="comment" placeholder="Leave a comment..." required></textarea>
             <button type="submit">Post Comment</button>
@@ -141,6 +167,7 @@
     {% endif %}
 </section>
 
+<!-- CTA -->
 <section class="cta-section">
     <div class="cta-content">
         <h2>Ready for Your Next Adventure?</h2>
@@ -152,16 +179,14 @@
     </div>
 </section>
 
+<!-- JS -->
 <script>
 const trails = {{ trails_json|safe }};
-
 const searchForm = document.getElementById('main-search-form');
-const trailInput = document.getElementById('trail-name');
 const searchResults = document.getElementById('search-results');
 
 searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
-
     const name = document.getElementById('trail-name').value.toLowerCase();
     const location = document.getElementById('location').value.toLowerCase();
     const difficulty = document.getElementById('difficulty').value;
@@ -204,19 +229,17 @@ searchForm.addEventListener('submit', function (e) {
     }
 });
 
-
-document.getElementById('hero-search-btn').addEventListener('click', function() {
+document.getElementById('hero-search-btn').addEventListener('click', () => {
     document.getElementById('search-modal').style.display = 'flex';
 });
 
-document.getElementById('close-search').addEventListener('click', function() {
+document.getElementById('close-search').addEventListener('click', () => {
     document.getElementById('search-modal').style.display = 'none';
 });
 
 document.addEventListener('DOMContentLoaded', () => {
     const stars = document.querySelectorAll('#rating-stars .fa-star');
     const input = document.getElementById('min-rating');
-
     stars.forEach(star => {
         star.addEventListener('click', () => {
             const value = parseInt(star.getAttribute('data-value'));
@@ -224,7 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStarUI(value);
         });
     });
-
     function updateStarUI(value) {
         stars.forEach(star => {
             const starValue = parseInt(star.getAttribute('data-value'));
@@ -232,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
 </script>
 
 <script src="{% static 'js/homepage.js' %}"></script>
