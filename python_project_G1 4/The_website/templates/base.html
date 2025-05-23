@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Outdoor Adventure & Hike Tracker - Australia{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo-container">
+                <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=50&h=50&fit=crop&crop=center" alt="TrailTracker Logo" class="logo-img">
+                
+                <a href="{% url 'home' %}" class="logo-text">
+                    Outdoor Adventure & Hike Tracker
+                    <span>AUSTRALIA</span>
+                </a>
+            </div>
+
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        
+            <ul class="menu">
+                <li>
+                    <a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+                </li>
+                
+                <li>
+                    <a href="#"><i class="fas fa-route"></i> Trails</a>
+                    <ul class="dropdown">
+                        <li><a href="#" id="search-trail-btn"><i class="fas fa-search"></i> Search Trails</a></li>
+                        <li><a href="{% url 'trail-submission' %} "><i class="fas fa-plus-circle"></i> Add New Trail</a></li>
+                    </ul>
+                </li>
+                
+                <li class="profile-item">
+                    <a href="#"><i class="fas fa-user"></i> Profile</a>
+                </li>
+               
+                <li class="admin-item">
+                    <a href="#"><i class="fas fa-lock"></i> Admin</a>
+                    <ul class="dropdown">
+                        <li><a href="admin-trail-approval"><i class="fas fa-check-circle"></i> Approve New Trails</a></li>
+                        <li><a href="admin-trail-management"><i class="fas fa-user-cog"></i> Manage Users</a></li>
+                    </ul>
+                </li>
+                
+                {% if user.is_authenticated %}
+                    <li>
+                        {% if user.is_superuser %}
+                        <a href="{% url 'trail-approval' %}" class="nav-link">
+                        <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                        {% else %}
+                        <a href="{% url 'dashboard' %}" class="nav-link">
+                        <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                        {% endif %}
+                    <li>
+                        <a href="{% url 'logout' %}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                {% else %}
+                    <!-- Fixed auth buttons structure -->
+                    <li class="auth-item">
+                        <a href="{% url 'user-login' %}" class="auth-button login-btn">
+                            <i class="fas fa-sign-in-alt"></i> Log In
+                        </a>
+                    </li>
+                    <li class="auth-item">
+                        <a href="{% url 'user-registration' %}" class="auth-button signup-btn">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+    
+    <main class="container my-4">
+        {% block content %}
+        <!-- Main content will go here -->
+        {% endblock %}
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section about">
+                <div class="footer-logo">
+                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=50&h=50&fit=crop&crop=center" alt="TrailTracker Logo" class="logo-img">
+                    <div class="footer-logo-text">
+                        Outdoor Adventure & Hike Tracker
+                        <span>AUSTRALIA</span>
+                    </div>
+                </div>
+                <p class="footer-about-text">
+                    Connecting outdoor enthusiasts with Australia's most beautiful trails since 2023.
+                </p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Trails</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> info@hiketracker.au</p>
+                <p><i class="fas fa-phone"></i> +61 2 1234 5678</p>
+                <p><i class="fas fa-map-marker-alt"></i> Sydney, NSW 2000</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} Outdoor Adventure & Hike Tracker. All rights reserved.</p>
+            {% load tz %}
+            {% timezone "Australia/Sydney" %}
+                <p class="server-date">Server Date: {% now "l, F j, Y \a\t g:i A T" %}</p>
+            {% endtimezone %}
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/base.js' %}"></script>
+</body>
+</html>

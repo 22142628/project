@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Submit Trail{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/trail-submission.css' %}">
+
+<div class="background-overlay"></div>
+<div class="container">
+    <div class="logo-container">
+        <h1>TRAIL<span>TRACKER</span></h1>
+        <p class="tagline">Document your outdoor adventures</p>
+    </div>
+    
+    <div class="form-container">
+        <h2>Submit a New Trail</h2>
+        <p class="form-subtitle">Share your favorite hiking and biking trails with our community</p>
+        
+        <form id="trailForm" action="{% url 'trail-submission' %}" method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="trail_name">Trail Name <span class="required">*</span></label>
+                <input type="text" id="trail_name" name="trail_name" placeholder="Enter trail name" required>
+                <div class="error-message" id="trail_name-error">Trail name is required and may only contain letters, numbers, spaces, and hyphens.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location <span class="required">*</span></label>
+                <input type="text" id="location" name="location" placeholder="Enter location" required>
+                <div class="error-message" id="location-error">Location is required and may only contain letters, numbers, spaces, and hyphens.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="gps">GPS Coordinates</label>
+                <input type="text" id="gps" name="gps" placeholder="e.g., 37.7749, -122.4194">
+                <div class="error-message" id="gps-error">Please enter valid coordinates in format: Latitude, Longitude (e.g., 37.7749, -122.4194)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="start_end">Trail Start / End Point</label>
+                <input type="text" id="start_end" name="start_end" placeholder="Describe the start and end points">
+                <div class="error-message" id="start_end-error">May only contain letters, numbers, spaces, and hyphens.</div>
+            </div>
+
+            <div class="form-group half-width">
+                <label for="distance">Distance (km) <span class="required">*</span></label>
+                <input type="text" id="distance" name="distance" placeholder="e.g., 5.2" required>
+                <div class="error-message" id="distance-error">Distance is required and must be a positive number.</div>
+            </div>
+
+            <div class="form-group half-width">
+                <label for="elevation">Elevation Gain (m) <span class="required">*</span></label>
+                <input type="text" id="elevation" name="elevation" placeholder="e.g., 150" required>
+                <div class="error-message" id="elevation-error">Elevation gain is required and must be a number.</div>
+            </div>
+
+            <div class="form-group half-width">
+                <label for="difficulty">Difficulty Level <span class="required">*</span></label>
+                <select id="difficulty" name="difficulty" required>
+                    <option value="" disabled selected hidden>Select difficulty level</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+                <div class="error-message" id="difficulty-error">Please select a difficulty level.</div>
+            </div>
+
+            <div class="form-group half-width">
+                <label for="trail_type">Trail Type <span class="required">*</span></label>
+                <select id="trail_type" name="trail_type" required>
+                    <option value="" disabled selected hidden>Select trail type</option>
+                    <option value="Loop">Loop</option>
+                    <option value="Out & Back">Out & Back</option>
+                    <option value="Point-to-Point">Point-to-Point</option>
+                </select>
+                <div class="error-message" id="trail_type-error">Please select a trail type.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="estimated_time">Estimated Time (hours) <span class="required">*</span></label>
+                <input type="text" id="estimated_time" name="estimated_time" placeholder="e.g., 2.5" required>
+                <div class="error-message" id="estimated_time-error">Estimated time is required and must be a positive number (numbers only).</div>
+            </div>
+
+            <div class="form-section">
+                <h3>Trail Conditions</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Muddy"> Muddy</label>
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Rocky"> Rocky</label>
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Icy"> Icy</label>
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Snowy"> Snowy</label>
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Dry"> Dry</label>
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Wet"> Wet</label>
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Hilly"> Hilly</label>
+                    <label class="checkbox-label"><input type="checkbox" name="conditions" value="Steep"> Steep</label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Accessibility Information</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="checkbox" name="accessibility" value="Wheelchair Accessible"> Wheelchair Accessible</label>
+                    <label class="checkbox-label"><input type="checkbox" name="accessibility" value="Child-friendly"> Child-friendly</label>
+                    <label class="checkbox-label"><input type="checkbox" name="accessibility" value="Dog-friendly"> Dog-friendly</label>
+                    <label class="checkbox-label"><input type="checkbox" name="accessibility" value="Permit Required"> Permit Required</label>
+                </div>
+            </div>
+
+            <div class="form-group half-width">
+                <label for="hiker_biker">Hiker/Biker Friendly? <span class="required">*</span></label>
+                <select id="hiker_biker" name="hiker_biker" required>
+                    <option value="" disabled selected hidden>Select an option</option>
+                    <option value="Hiker">Hiker</option>
+                    <option value="Biker">Biker</option>
+                    <option value="Both">Both</option>
+                </select>
+                <div class="error-message" id="hiker_biker-error">Please select an option.</div>
+            </div>
+
+            <div class="form-group half-width">
+                <label for="completed_as">How did you complete the trail? <span class="required">*</span></label>
+                <select id="completed_as" name="completed_as" required>
+                    <option value="" disabled selected hidden>Select an option</option>
+                    <option value="Hiking">Hiking</option>
+                    <option value="Biking">Biking</option>
+                </select>
+                <div class="error-message" id="completed_as-error">Please select an option.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="photos">Upload Photos</label>
+                <input type="file" id="photos" name="photos" multiple accept="image/*" class="file-input">
+                <div class="file-placeholder">Choose files or drag and drop here</div>
+                <div class="error-message" id="photos-error">Only image files are allowed (JPEG, PNG, GIF).</div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" placeholder="Enter a detailed description of the trail"></textarea>
+                <div class="error-message" id="description-error">May only contain letters, numbers, spaces, full stops, commas, and hyphens.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">User Notes</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional notes about the trail"></textarea>
+                <div class="error-message" id="notes-error">May only contain letters, numbers, spaces, full stops, commas, and hyphens.</div>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Trail</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

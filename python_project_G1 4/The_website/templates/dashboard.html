@@ -1,0 +1,144 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+   
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrailBlazer | My Profile</title>
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="profile-header">
+            <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+            <button class="btn btn-primary" id="saveProfileBtn">
+                <i class="fas fa-save"></i> Save Profile
+            </button>
+        </div>
+
+        <div class="profile-layout">
+           
+            <aside class="profile-sidebar">
+                <div class="avatar-upload">
+                    <img id="avatarPreview" src="https://ui-avatars.com/api/?name=Sarah+Adventurer&background=4a6fa5&color=fff&size=150" class="avatar-preview" alt="Profile">
+                    <div class="avatar-edit">
+                        <input type="file" id="avatarUpload" accept="image/*">
+                        <label for="avatarUpload"><i class="fas fa-camera"></i></label>
+                    </div>
+                </div>
+
+                <h2 id="userName">Sarah Adventurer</h2>
+                <p><i class="fas fa-map-marker-alt" id="userLocation"></i> <span id="locationText">Boulder, Colorado</span></p>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label>Member Since</label>
+                    <p id="joinDate">March 2022</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Activity Level</label>
+                    <div class="badge badge-primary" id="activityLevelBadge">
+                        <i class="fas fa-bolt"></i> <span id="activityLevelText">Intermediate</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferred Activities</label>
+                    <div id="activityTags" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                       
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Achievements Earned</label>
+                    <div style="margin-top: 0.5rem; font-size: 1.5rem; color: var(--warning);">
+                        <i class="fas fa-trophy"></i> <span id="achievementCount">0</span>
+                    </div>
+                </div>
+            </aside>
+
+           
+            <main class="profile-main">
+               
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="trailsCompleted">42</div>
+                        <div class="stat-label">Trails Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="milesHiked">327</div>
+                        <div class="stat-label">Miles Hiked</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="peaksConquered">8</div>
+                        <div class="stat-label">Peaks Conquered</div>
+                    </div>
+                </div>
+
+                
+                <section class="profile-card">
+                    <h2><i class="fas fa-user-edit"></i> Profile Information</h2>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="displayName">Display Name</label>
+                            <input type="text" id="displayName" class="form-control" value="Sarah Adventurer">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" class="form-control" value="Boulder, Colorado">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea id="bio" class="form-control">Outdoor enthusiast who loves exploring mountain trails and capturing nature's beauty. Always looking for the next adventure!</textarea>
+                            <div class="char-counter"><span id="bioCount">0</span>/500 characters</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="activityLevel">Activity Level</label>
+                            <select id="activityLevel" class="form-control">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Favorite Activities</label>
+                            <div id="activityCheckboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                               
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                
+                <section class="profile-card">
+                    <h2><i class="fas fa-trophy"></i> My Achievements</h2>
+                    <div class="info-note">
+                        <i class="fas fa-info-circle"></i> Achievements are awarded by TrailBlazer administrators for notable accomplishments.
+                    </div>
+                    
+                    <div id="achievementsContainer">
+                        
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Profile updated successfully!</span>
+    </div>
+
+    <script src="profile.js"></script> 
+</body>
+</html>

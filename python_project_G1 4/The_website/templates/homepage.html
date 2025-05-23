@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Outdoor Adventure & Hike Tracker - Australia{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+
+<div class="search-modal" id="search-modal">
+    <div class="search-container">
+        <div class="search-header">
+            <h2>Find Your Perfect Trail</h2>
+            <button id="close-search" class="close-search">&times;</button>
+        </div>
+        <form id="main-search-form" class="search-form">
+            <div class="search-group">
+                <label for="trail-name">Trail Name</label>
+                <input type="text" id="trail-name" list="trail-names" placeholder="Enter trail name...">
+                <datalist id="trail-names">
+                    {% for t in trails %}
+                        <option value="{{ t.trail_name }}"></option>
+                    {% endfor %}
+                </datalist>
+                <div class="error-message" id="trail-name-error"></div>
+            </div>
+
+            <div class="search-actions">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                    SEARCH TRAILS
+                </button>
+            </div>
+        </form>
+
+        <!-- Grid Results -->
+        <div id="search-results" class="trail-grid"></div>
+    </div>
+</div>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Your Path. Your Story. One Hike at a Time.</h1>
+        <p class="hero-subtitle">Discover Australia's most breathtaking trails and track your outdoor adventures</p>
+        <button id="hero-search-btn" class="cta-search-button">
+            <i class="fas fa-search"></i> 
+            <span>SEARCH TRAILS</span>
+        </button>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="stats-container">
+        <div class="stat-item"><div class="stat-number">1,200+</div><div class="stat-label">Trails Tracked</div></div>
+        <div class="stat-item"><div class="stat-number">25,000+</div><div class="stat-label">Adventurers</div></div>
+        <div class="stat-item"><div class="stat-number">4.8★</div><div class="stat-label">Average Rating</div></div>
+    </div>
+</section>
+
+<section class="featured-image-section">
+    <img src="https://www.exploreoutdoors.vic.gov.au/__data/assets/image/0018/518112/varieties/image_gallery_large.jpg" 
+         alt="Scenic hiking trail" 
+         class="featured-image">
+    <div class="image-overlay">
+        <h3>Explore Victoria's Best Hiking Trails</h3>
+        <p>From coastal walks to mountain treks</p>
+    </div>
+</section>
+
+<section class="trails-section">
+    <div class="section-header">
+        <h2>FEATURED TRAILS</h2>
+        <p class="section-subtitle">Discover hand-picked trails recommended by our community</p>
+    </div>
+    <div class="trail-grid" id="trail-results"></div>
+</section>
+
+<section class="rating-comment-section">
+    <div class="section-header"><h2>Share Your Experience</h2></div>
+    {% if user.is_authenticated %}
+    <div class="comment-form-container">
+        <form method="POST" action="{% url 'submit-rating' %}">{% csrf_token %}
+            <label for="rating">Rate this trail:</label>
+            <select name="rating" id="rating">
+                <option value="1">1 ★</option>
+                <option value="2">2 ★★</option>
+                <option value="3">3 ★★★</option>
+                <option value="4">4 ★★★★</option>
+                <option value="5">5 ★★★★★</option>
+            </select>
+            <button type="submit">Submit Rating</button>
+        </form>
+
+        <form method="POST" action="{% url 'submit-comment' %}">{% csrf_token %}
+            <textarea name="comment" placeholder="Leave a comment..." required></textarea>
+            <button type="submit">Post Comment</button>
+        </form>
+    </div>
+    {% else %}
+    <p class="login-reminder">Please <a href="{% url 'user-login' %}">log in</a> to rate and comment on trails.</p>
+    {% endif %}
+</section>
+
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Ready for Your Next Adventure?</h2>
+        <p>Join thousands of outdoor enthusiasts tracking their hikes across Australia</p>
+        <div class="cta-buttons">
+            <a href="{% url 'user-registration' %}" class="cta-button primary">Sign Up Free</a>
+            <a href="#" class="cta-button secondary">Learn More</a>
+        </div>
+    </div>
+</section>
+
+<script>
+const trails = {{ trails_json|safe }};
+
+const searchForm = document.getElementById('main-search-form');
+const trailInput = document.getElementById('trail-name');
+const searchResults = document.getElementById('search-results');
+
+searchForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const query = trailInput.value.trim().toLowerCase();
+    const matches = trails.filter(t => !query || t.trail_name.toLowerCase().includes(query));
+    searchResults.innerHTML = '';
+
+    if (matches.length === 0) {
+        searchResults.innerHTML = '<p>No trails found.</p>';
+    } else {
+        matches.forEach(trail => {
+            const card = document.createElement('div');
+            card.classList.add('trail-card');
+            card.innerHTML = `
+                <div class="card-image">
+                    ${trail.photos ? `<img src="/media/${trail.photos}" alt="${trail.trail_name}">` : '<div class="no-img">No Image</div>'}
+                </div>
+                <div class="card-body">
+                    <h4>${trail.trail_name}</h4>
+                    <p><strong>Location:</strong> ${trail.location}</p>
+                    <p><strong>Distance:</strong> ${trail.distance} km</p>
+                    <p><strong>Difficulty:</strong> ${trail.difficulty}</p>
+                    <button onclick="alert('Open: ${trail.trail_name}')">Open Trail</button>
+                </div>
+            `;
+            searchResults.appendChild(card);
+        });
+    }
+});
+
+document.getElementById('hero-search-btn').addEventListener('click', function() {
+    document.getElementById('search-modal').style.display = 'flex';
+});
+
+document.getElementById('close-search').addEventListener('click', function() {
+    document.getElementById('search-modal').style.display = 'none';
+});
+</script>
+
+<script src="{% static 'js/homepage.js' %}"></script>
+{% endblock %}
